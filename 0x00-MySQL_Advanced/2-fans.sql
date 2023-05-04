@@ -1,10 +1,6 @@
 -- Select origin and count the number of fans for each country
-SELECT origin, COUNT(*) AS nb_fans
--- From the bands table
-FROM bands
--- Join with the fans table to get the number of fans for each band
-JOIN fans ON bands.band_id = fans.band_id
+SELECT DISTINCT `origin`, SUM(`fans`) as `nb_fans` FROM `metal_bands`
 -- Group by origin to aggregate the number of fans for each country
-GROUP BY origin
+GROUP BY `origin`
 -- Order by the number of fans in descending order
-ORDER BY nb_fans DESC;
+ORDER BY `nb_fans` DESC;
