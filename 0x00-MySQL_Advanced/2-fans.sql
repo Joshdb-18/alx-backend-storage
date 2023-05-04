@@ -1,5 +1,10 @@
--- This script retrieves the country origins of bands and ranks them by the number of (non-unique) fans
+-- Select origin and count the number of fans for each country
 SELECT origin, COUNT(*) AS nb_fans
+-- From the bands table
 FROM bands
+-- Join with the fans table to get the number of fans for each band
+JOIN fans ON bands.id = fans.band_id
+-- Group by origin to aggregate the number of fans for each country
 GROUP BY origin
+-- Order by the number of fans in descending order
 ORDER BY nb_fans DESC;
