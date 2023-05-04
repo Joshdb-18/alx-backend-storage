@@ -1,9 +1,9 @@
--- Check if the table exists first
-IF NOT EXISTS (SELECT * FROM information_schema.tables WHERE table_name = 'users') 
-
--- If it doesn't exist, create it
-CREATE TABLE users (
-    id INTEGER PRIMARY KEY AUTO_INCREMENT NOT NULL, -- unique identifier for each user
-    email VARCHAR(255) UNIQUE NOT NULL, -- unique email for each user
-    name VARCHAR(255) -- user's name
+-- If the table already exists, this script will not fail
+CREATE TABLE IF NOT EXISTS users (
+  -- id column is an integer, never null, auto increment and primary key
+  id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  -- email column is a string of maximum 255 characters, never null, and unique
+  email VARCHAR(255) NOT NULL UNIQUE,
+  -- name column is a string of maximum 255 characters
+  name VARCHAR(255)
 );
