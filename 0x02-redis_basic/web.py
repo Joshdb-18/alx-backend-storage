@@ -4,20 +4,37 @@ Redis web
 """
 import redis
 import requests
-rc = redis.Redis()
-count = 0
+from functools import wraps
+from typing import Callable
 
 
+redis_store = redis.Redis()
+
+
+def data_cacher(method: Callable) -> Callable:
+    """
+    Caches the output of the fetched data
+    """
+    @wraps(method)
+    def invoker(url) -> str:
+        """
+        Function for caching the output
+        """
+        redis_store.incr(f'count:{url}')
+        result = redis_store.get(f'result:{url}')
+        if result:
+            return result.decode('utf-8')
+        result = method(url)
+        redis_store.set(f'count:{url}', 0)
+        redis_store.setex(f'result:{url}', 10, result)
+        return result
+    return invoker
+
+
+@data_cacher
 def get_page(url: str) -> str:
     """
-    Tracks how many times a URL is accessed
+    Returns the content of a url after caching the request
+    and tracking it
     """
-    rc.set(f"cached:{url}", count)
-    resp = requests.get(url)
-    rc.incr(f"count:{url}")
-    rc.setex(f"cached:{url}", 10, rc.get(f"cached:{url}"))
-    return resp.text
-
-
-if __name__ == "__main__":
-    get_page('http://slowwly.robertomurray.co.uk')
+    return requests.get(url).text
